@@ -1,52 +1,58 @@
 const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
+const Body = Matter.Body;
 
-let engine;
-let world;
-
-
+var ball,groundObj,leftSide,rightSide;
+var world;
+var radius = 40;
 
 function setup() {
-  createCanvas(400,400);
-  engine = Engine.create();
+	createCanvas(1600, 700);
+	rectMode(CENTER);
+
+	engine = Engine.create();
+	world = engine.world;
+
+	var ball_options={
+		isStatic:false,
+		restitution:0.3,
+		friction:0,
+		density:1.2
+	}
+
+	ball = Bodies.circle(260,100,radius/2,ball_options);
+	World.add(world,ball);
+
+	groundObj=new ground(width/2,670,width,20);
+	leftSide = new ground(1100,600,20,120);
+	rightSide = new ground(1350,600,20,120);
+
+	Engine.run(engine);
   
-  world = engine.world;
+}
+
+
+function draw() {
   rectMode(CENTER);
-  ellipseMode(RADIUS);
+  background(0);
+
+
+  ellipse(ball.position.x,ball.position.y,radius,radius);
+
+  groundObj.display();
+  leftSide.display();  
+  rightSide.display();
   
-  var ball_options={
-    restitution : 0.8
-  }
-  ball=Bodies.circle(200,50,10,ball_options);
-  World.add(world,ball);
-
-  ball2=Bodies.circle(350,10,12,ball_options);
-  World.add(world,ball2);
-
-  con=Matter.Constraint.create({pointA:{x:200, y:20}, bodyB:ball, pointB:{x:0, y:0}, length:100, stiffness:0.1});
-  World.add(world,con);
-  con2=Matter.Constraint.create({bodyA:ball,pointA:{x:0,y:0},bodyB:ball2,pointB:{x:0,y:0},length:100,stiffness:0.1});
-  World.add(world,con2);
 }
 
-function draw() 
-{
-  background(51);
-  Engine.update(engine);
-  ellipse(ball.position.x,ball.position.y,10);
-  ellipse(ball2.position.x,ball2.position.y,12);
+function keyPressed() {
+  	if (keyCode === UP_ARROW) {
 
-  push();
-  strokeWeight(2);
-  stroke(255);
-  line(con.pointA.x,con.pointA.y,ball.position.x,ball.position.y);
-  line(ball.position.x,ball.position.y,ball2.position.x,ball2.position.y);
-  function keyPressed(){
-    if(keyCode==RIGHT_ARROW){
-      Matter.Body.applyForce(ball, {x:0, y:0}, {x:0.05, y:0});
-    }
-  }
+		Matter.Body.applyForce(ball,ball.position,{x:85,y:-85});
+    
+  	}
 }
+
 
 
